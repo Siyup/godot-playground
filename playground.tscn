@@ -1,0 +1,115 @@
+[gd_scene load_steps=16 format=2]
+
+[ext_resource path="res://NewFPS.tscn" type="PackedScene" id=1]
+[ext_resource path="res://MovingBox.gd" type="Script" id=2]
+[ext_resource path="res://playground.gd" type="Script" id=3]
+[ext_resource path="res://badGuy.gd" type="Script" id=4]
+
+[sub_resource type="BoxShape" id=1]
+
+[sub_resource type="CubeMesh" id=2]
+
+[sub_resource type="BoxShape" id=3]
+extents = Vector3( 1, 25, 1 )
+
+[sub_resource type="CubeMesh" id=4]
+size = Vector3( 2, 50, 2 )
+
+[sub_resource type="BoxShape" id=5]
+
+[sub_resource type="CubeMesh" id=6]
+size = Vector3( 40, 2, 10 )
+
+[sub_resource type="BoxShape" id=7]
+
+[sub_resource type="CubeMesh" id=8]
+
+[sub_resource type="BoxShape" id=9]
+
+[sub_resource type="BoxShape" id=10]
+
+[sub_resource type="CubeMesh" id=11]
+
+[node name="Spatial" type="Spatial"]
+script = ExtResource( 3 )
+
+[node name="StaticBody" type="StaticBody" parent="."]
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticBody"]
+transform = Transform( 50, 0, 0, 0, 1, 0, 0, 0, 50, 0, -1, 0 )
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="StaticBody"]
+transform = Transform( -50, 0, 4.37114e-06, 0, 1, 0, -4.37114e-06, 0, -50, 0, -1, 0 )
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="NewFPS" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.37334, 0.542743 )
+
+[node name="StaticBody2" type="StaticBody" parent="."]
+transform = Transform( 0.970591, -9.31323e-10, -0.240736, 0.0121712, 0.998721, 0.0490712, 0.240428, -0.0505581, 0.969349, 3.365, 7.86714, -11.7912 )
+input_ray_pickable = false
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticBody2"]
+transform = Transform( -0.984808, -0.142244, -0.0996003, 0, 0.573576, -0.819152, 0.173648, -0.806707, -0.564862, 0, 0, 0 )
+shape = SubResource( 3 )
+
+[node name="MeshInstance" type="MeshInstance" parent="StaticBody2"]
+transform = Transform( -0.984808, -0.142244, -0.0996003, 0, 0.573576, -0.819152, 0.173648, -0.806707, -0.564862, 0, 0, 0 )
+mesh = SubResource( 4 )
+material/0 = null
+
+[node name="StaticBody3" type="StaticBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5987, 29.2952 )
+
+[node name="CollisionShape" type="CollisionShape" parent="StaticBody3"]
+transform = Transform( 20, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0 )
+shape = SubResource( 5 )
+
+[node name="MeshInstance" type="MeshInstance" parent="StaticBody3"]
+mesh = SubResource( 6 )
+material/0 = null
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( -0.98322, 0, 0.182424, 0.0704279, 0.922471, 0.379589, -0.168281, 0.386067, -0.906992, 0, 10.6032, 0 )
+
+[node name="MovingBox" type="KinematicBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 16.8194, 1.15916, 5.10606 )
+script = ExtResource( 2 )
+
+[node name="Area" type="Area" parent="MovingBox"]
+
+[node name="CollisionShape" type="CollisionShape" parent="MovingBox/Area"]
+transform = Transform( 1.1, 0, 0, 0, 1.1, 0, 0, 0, 1.1, 0, 0, 0 )
+shape = SubResource( 7 )
+
+[node name="MeshInstance" type="MeshInstance" parent="MovingBox"]
+mesh = SubResource( 8 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="MovingBox"]
+shape = SubResource( 9 )
+
+[node name="badGuy" type="KinematicBody" parent="." groups=[
+"enemy",
+]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -16.2833, 3.40409, -14.017 )
+script = ExtResource( 4 )
+
+[node name="respawnTimer" type="Timer" parent="badGuy"]
+wait_time = 3.0
+one_shot = true
+
+[node name="CollisionShape" type="CollisionShape" parent="badGuy"]
+transform = Transform( 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0 )
+shape = SubResource( 10 )
+
+[node name="MeshInstance" type="MeshInstance" parent="badGuy"]
+transform = Transform( 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0 )
+mesh = SubResource( 11 )
+material/0 = null
+[connection signal="box_touched" from="NewFPS" to="MovingBox" method="_on_NewFPS_box_touched"]
+[connection signal="body_entered" from="MovingBox/Area" to="MovingBox" method="_on_Area_body_entered"]
+[connection signal="body_entered" from="MovingBox/Area" to="NewFPS" method="_on_Area_body_entered"]
+[connection signal="timeout" from="badGuy/respawnTimer" to="badGuy" method="_on_respawnTimer_timeout"]
